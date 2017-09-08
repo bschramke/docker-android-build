@@ -40,9 +40,11 @@ RUN install-android-sdk.sh
 # install default Android SDK packages
 RUN update-android-sdk.sh
 
+RUN mkdir -p  ~/.gradle
+
 # Go to workspace
-VOLUME ["/opt/workspace", ]
+VOLUME ["/opt/workspace", "/home/${RUN_USER}/.gradle" ]
 WORKDIR /opt/workspace
 
 #ENTRYPOINT ["./gradlew"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh"]
