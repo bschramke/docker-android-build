@@ -16,8 +16,8 @@ ENV JAVA_OPTS "-Xms4096m -Xmx4096m"
 ENV GRADLE_OPTS "-XX:+UseG1GC -XX:MaxGCPauseMillis=1000"
 
 #Set default values for run user
-ENV RUN_USER mobileci
-ENV RUN_UID 1000
+ARG RUN_USER=mobileci
+ARG RUN_UID=1000
 
 # Copy install tools
 COPY tools /opt/tools
@@ -40,10 +40,10 @@ RUN install-android-sdk.sh
 # install default Android SDK packages
 RUN update-android-sdk.sh
 
-RUN mkdir -p  ~/.gradle
+#RUN mkdir -p  ~/.gradle
 
 # Go to workspace
-VOLUME ["/opt/workspace", "/home/${RUN_USER}/.gradle" ]
+VOLUME ["/opt/workspace", "/home/$(RUN_USER)" ]
 WORKDIR /opt/workspace
 
 #ENTRYPOINT ["./gradlew"]
