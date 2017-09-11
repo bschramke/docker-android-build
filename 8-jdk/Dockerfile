@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk
 
 MAINTAINER Björn Schramke "bjoern.schramke@epost-dev.de"
 
@@ -19,14 +19,11 @@ ENV GRADLE_OPTS "-XX:+UseG1GC -XX:MaxGCPauseMillis=1000"
 ARG RUN_USER=mobileci
 ARG RUN_UID=1000
 
-# Copy install tools
-#COPY tools /opt/tools
-
 # update system packages
 COPY tools/update-packages.sh /opt/tools/
 RUN update-packages.sh
 
-# create work directories
+# create work directories and mobileci user
 COPY tools/init-system.sh /opt/tools/
 RUN init-system.sh
 
@@ -40,23 +37,9 @@ USER $RUN_USER
 COPY tools/install-android-sdk.sh /opt/tools/
 RUN install-android-sdk.sh
 
-# install default Android SDK packages
-COPY tools/update-android-sdk.sh /opt/tools/
-RUN update-android-sdk.sh
-
-#RUN mkdir -p  ~/.gradle
-
-# warm-up gradle cache
-USER root
-COPY tools/init-gradle.sh /opt/tools/
-ADD init-gradle/ /tmp/init-gradle
-RUN chown -Rf $RUN_USER:$RUN_USER /tmp/init-gradle
-USER $RUN_USER
-RUN init-gradle.sh
-
 # Go to workspace
 VOLUME ["/opt/workspace" ]
 WORKDIR /opt/workspace
 
 #ENTRYPOINT ["./gradlew"]
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["/bin/bash"]

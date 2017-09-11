@@ -1,5 +1,7 @@
 NS = bschramke
-IMAGE = $(NS)/android-build-base:dev
+IMAGE_TAG = 8-jdk
+IMAGE_NAME = android-build-base
+IMAGE = $(NS)/$(IMAGE_NAME):$(IMAGE_TAG)
 WORKDIR := $(shell pwd)
 export IMAGE
 
@@ -9,6 +11,6 @@ build:
 	docker build -t $(IMAGE) .
 
 run: build
-	docker run -it --rm -v /tmp/build_cache:/home/mobileci -v ${WORKDIR}:/opt/workspace --name android-build $(IMAGE)
+	docker run -it --rm -v ${WORKDIR}:/opt/workspace --name android-build $(IMAGE)
 
 default: build
