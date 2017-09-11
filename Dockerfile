@@ -20,12 +20,14 @@ ARG RUN_USER=mobileci
 ARG RUN_UID=1000
 
 # Copy install tools
-COPY tools /opt/tools
+#COPY tools /opt/tools
 
 # update system packages
+COPY tools/update-packages.sh /opt/tools/
 RUN update-packages.sh
 
 # create work directories
+COPY tools/init-system.sh /opt/tools/
 RUN init-system.sh
 
 # add Android SDK Licenses
@@ -35,15 +37,25 @@ RUN chown -Rf $RUN_USER:$RUN_USER $ANDROID_HOME/licenses
 USER $RUN_USER
 
 # download & install Android SDK Tools
+COPY tools/install-android-sdk.sh /opt/tools/
 RUN install-android-sdk.sh
 
 # install default Android SDK packages
+COPY tools/update-android-sdk.sh /opt/tools/
 RUN update-android-sdk.sh
 
 #RUN mkdir -p  ~/.gradle
 
+# warm-up gradle cache
+USER root
+COPY tools/init-gradle.sh /opt/tools/
+ADD init-gradle/ /tmp/init-gradle
+RUN chown -Rf $RUN_USER:$RUN_USER /tmp/init-gradle
+USER $RUN_USER
+RUN init-gradle.sh
+
 # Go to workspace
-VOLUME ["/opt/workspace", "/home/$(RUN_USER)" ]
+VOLUME ["/opt/workspace" ]
 WORKDIR /opt/workspace
 
 #ENTRYPOINT ["./gradlew"]
