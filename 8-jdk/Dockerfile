@@ -41,5 +41,5 @@ RUN install-android-sdk.sh
 VOLUME ["/opt/workspace" ]
 WORKDIR /opt/workspace
 
-#ENTRYPOINT ["./gradlew"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["./gradlew"]
+#ENTRYPOINT ["/bin/bash"]
